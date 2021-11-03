@@ -16,29 +16,22 @@ export class ScreenshotService {
     width = 1200,
     height = 630,
   }: ScreenshotProps): Promise<any> {
-    const browser = await (isLocalhost ? puppeteer : puppeteerCore).launch({
+    const browserCore = isLocalhost ? puppeteer : puppeteerCore;
+    const browser = await browserCore.launch({
       headless: true,
-      ...(isLocalhost
-        ? {}
-        : { args: chrome.args, executablePath: await chrome.executablePath }),
+      args: chrome.args,
+      executablePath: await chrome.executablePath,
     });
     const page = await browser.newPage();
 
     await page.setViewport({ width, height });
 
-    await page.goto(
-      url,
-      isLocalhost
-        ? {
-            waitUntil: "networkidle2",
-          }
-        : {
-            waitUntil: "networkidle0",
-          }
-    );
+    await page.goto(url, {
+      waitUntil: "networkidle2",
+    });
 
     const screenshot = await page.screenshot({
-      type: "webp",
+      type: "png",
       encoding: "binary",
       captureBeyondViewport: true,
       fullPage: true,
