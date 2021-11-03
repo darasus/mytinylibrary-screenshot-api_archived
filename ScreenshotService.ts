@@ -19,8 +19,9 @@ export class ScreenshotService {
     const browserCore = isLocalhost ? puppeteer : puppeteerCore;
     const browser = await browserCore.launch({
       headless: true,
-      args: chrome.args,
+      args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
       executablePath: await chrome.executablePath,
+      ignoreHTTPSErrors: true,
     });
     const page = await browser.newPage();
 
@@ -30,12 +31,16 @@ export class ScreenshotService {
       waitUntil: "networkidle2",
     });
 
+    await page.waitFor(1000);
+
     const screenshot = await page.screenshot({
-      type: "png",
+      type: "webp",
       encoding: "binary",
       captureBeyondViewport: true,
       fullPage: true,
     });
+
+    console.log({ screenshot });
 
     return screenshot;
   }
