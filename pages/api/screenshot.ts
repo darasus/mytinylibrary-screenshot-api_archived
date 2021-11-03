@@ -17,8 +17,8 @@ export default async function handle(
   const screenshot = await screenshotService.screenshot({
     isLocalhost,
     url: req.query.url as string,
-    width: Number(req.query.width) || undefined,
     height: Number(req.query.height) || undefined,
+    width: Number(req.query.width) || undefined,
   });
 
   const buffer = new Buffer(screenshot, "base64");
